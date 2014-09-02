@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# pclfofar, PCL Find Original Filename and Rename
+# oh, ho ho, what have you gotten yourself in to? if you're looking at this file
+# it's because _someone_ is storing windows print jobs _in_ their print queue
+# and you just deleted them. you undeleted them using super l33t undelete tools
+# and now you want to rename your .SPL files back to what they originally were.
+# WHO WOULD EVER NEED THIS?!?! no one. my company did. once. so here it is...
+
+# put this in the same folder as all your .SPL files
+
+# run through all the files in the directory
+for fileName in /*
+do
+
+# this function finds the original filename in the .SPL file. it's on line 8
+function grabFileName {
+# this line finds it on line 8, and removes the quotes and all that
+sed -n '8p' $fileName | grep -o '\".*\"' | tr -d '"';
+}
+
+# this line sets the bash variable of the new filename
+newFileName=$(grabFileName)
+
+# this line does the renaming, and makes sure it doesn't clobber it, incase the print queue had multiples
+# of the same job name
+mv --backup=numbered $fileName "$newFileName"
+done
